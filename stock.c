@@ -7,35 +7,6 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-/*
-Monday morning Problem
-
-Stock with cost 100 at time = 0
-
-I'd like to simulate 1000 purchases of stock at same time. 
-
-
-semaphore with x amount initialized, such that when that many orders go through, price changes, and no other orders can go through
-
-execute order semaphore that once we reach the x amount, stops all other orders from going through 
-
-
-readers-writers problem
-rw_mutex to read and write
-r_mutex for just read
-read_count int to let rw_mutex know that there are readers
-
-need protocol for handling reading concurently vs letting writers write
-
-
-initialize 1000 threads and make them wait for a signal
-use a cv
-
-
-
-
-*/
-
 //function declarations
 void *threadFunc();
 void purchaseStock();
