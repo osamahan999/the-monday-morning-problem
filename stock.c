@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
-#define NUM_OF_THREADS 10
+#define NUM_OF_THREADS 1000
 #define BASE_STOCK_PRICE 200
-#define PURCHASE_QUEUE_LIMIT 2
+#define PURCHASE_QUEUE_LIMIT 20
 
 #include <stdio.h>
 #include <pthread.h>
@@ -91,22 +91,23 @@ void purchaseStock()
     // if full, wait
     sem_wait(&full);
 
-    if (queuePointer == PURCHASE_QUEUE_LIMIT - 1)
+    if (queuePointer == PURCHASE_QUEUE_LIMIT)
     {
         stockPrice *= 1.01; //queue full, which means we're incrementing cost of stock
+        sem_post(&full);    //posts to full that the last stuck threads can come through and change price of stock
     }
 
     else
     {
+        queuePointer++;  //increment queue
         sem_post(&full); //not full
 
         sem_wait(&boundedBuffer); //lock buffer now
         printf("Holy shit im in!\n");
 
         // purchaseQueue[queuePointer] = pthread_self();
-        queuePointer++;
         sem_post(&boundedBuffer); //unlock
     }
 
-    //if writing to buffer alrdy, wait
+    pthread_exit(0);
 }
