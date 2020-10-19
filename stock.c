@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
-#define NUM_OF_THREADS 1000
+#define NUM_OF_THREADS 21
 #define BASE_STOCK_PRICE 200
-#define PURCHASE_QUEUE_LIMIT 50
+#define PURCHASE_QUEUE_LIMIT 3
 
 #include <stdio.h>
 #include <pthread.h>
