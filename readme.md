@@ -12,6 +12,28 @@ how many stocks can purchase at base price
 
 This program just simulates that with NUM_OF_THREADS amount of purchase orders at price BASE_STOCK_PRICE
 and allows PURCHASE_QUEUE_LIMIT amount of purchases to go through before blocking the rest
+Then, it changes the price by some amount, and allows the next amount of PURCHASE_QUEUE_LIMIT to purchase. 
+The output gives the thread numbers and what prices they got.
+
+This is similar to when you have a bunch of purchase orders with a max price, and it simulates how certain
+threads may get the current stock price, but as the price increases, other threads will also get executed.
+
+The reason why I decided to do it with threads and not with some kind of queue is because I don't think the 
+NASDAQ or the NYSE utilizes a queue for the orders. I think that would not only take far too many resources
+since as we saw, on october 12th, tesla had a volume of 39 million. Storing 39 million purchase orders would take
+around 1 byte for the price, 4 bytes for date of order, and a few other bytes for the rest of the data, but suppose 
+round to a total of 6 bytes per order, thats 234 million bytes, or 223 gigabytes just for the queue JUST for TSLA
+
+Not only that, but locking the queue and adding the purchase orders onto it would take so long. Suppose the initial 6:30am volume
+is 1 million total orders. Suppose the time it took to add to queue took 5ms per order, that's 5 million ms, or 16 minute and 44 seconds
+
+Now obviously, the way that the NYSE would handle this would be a more 1-to-1 order kind of thing, rather than a set amount of orders per price.
+AKA, the NYSE would take each sell order for a certain price, find enough buy orders to fullfil those sell orders, and have those go through.  
+The market is a buyer-seller market, not some random number generator. For each purchase there is a seller, and that's how the prices would be 
+calculated. 
+
+All of this is really just speculation. I really am unsure how the NYSE would handle these hundreds of millions of orders per day. The numbers
+are too big for me to wrap my head around. Would love to hear anyone else's take on this though, please feel free to reach out!
 
 I used two semaphores and a mutex to do this. The mutex is used to simply lock the threadCount to make sure
 that the program counter of each thread is at the exact same spot initially to simulate the 6:30 am conditions

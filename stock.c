@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 //function declarations
-void *threadFunc();
+void *threadFunc(); //gets all threads to the same program counter
 void purchaseStock();
 
 int threadCount = 0; //used to get all threads to the same program counter
@@ -19,7 +19,7 @@ int queuePointer = 0; //keeps track of amt of purchases being done with current 
 
 pthread_mutex_t mutex; //used to keep track of all threads to get them to the same program counter
 sem_t full;            //used to see if the purchase queue is full & should change price
-sem_t boundedBuffer;   //used when writing to allPurchases array
+sem_t buffer;          //used when writing to allPurchases array
 
 //data structure for just holding this data
 typedef struct
@@ -40,7 +40,7 @@ int main()
     sem_init(&full, 0, 1); //initialized to 1 because I want to alternate between 1 and 0 for the lock.
     //Should probably start it at 10 and then reset it to 10 each time stock price changes tho
 
-    sem_init(&boundedBuffer, 0, 1); //initialized to 1 b/c just used as a lock
+    sem_init(&buffer, 0, 1); //initialized to 1 b/c just used as a lock
 
     //creates all the threads
     for (int i = 0; i < NUM_OF_THREADS; i++)
@@ -92,7 +92,7 @@ void purchaseStock()
     double temp = stockPrice; //gets price now so that we dont need a mutex for the price
     sem_post(&full);          //not full
 
-    sem_wait(&boundedBuffer); //lock buffer now
+    sem_wait(&buffer); //lock buffer now
 
     //has to be done in cs because dont want pointer to be reused
     allPurchases[purchasePointer] = malloc(sizeof(purchases));
@@ -101,7 +101,7 @@ void purchaseStock()
 
     purchasePointer++;
 
-    sem_post(&boundedBuffer); //unlock
+    sem_post(&buffer); //unlock
 
     pthread_exit(0); //kills threads who purchased
 }
